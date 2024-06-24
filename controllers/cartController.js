@@ -18,6 +18,9 @@ const getCart = async(req, res) => {
     try {
         const userId = req.user.id
         const cart = await Cart.find({ user: userId, type: 'CART' }).sort({date: -1}).populate(['user', 'product'])
+        if(Array.isArray(cart)) {
+            cart.forEach(c => c.product.image = `${process.env.APP_URL}/uploads/${c.product.image}`)
+        }
         res.status(200).json(cart)
     } catch (error) {
         console.error(error.message)
@@ -88,9 +91,12 @@ const updateCartQty = async(req, res) => {
     }
 
     try {
-        const cart = await Cart.findOneAndUpdate({ user: user_id, product: product_id }, {
-            quantity: qty
-        })
+        let cart = null
+        if(qty === 0) {
+            cart = await Cart.findOneAndDelete({ user: user_id, product: product_id, type: 'CART' })
+        }else {
+            cart = await Cart.findOneAndUpdate({ user: user_id, product: product_id, type: 'CART' }, { quantity: qty })
+        }
         if(!cart){
             return res.status(404).json({error: 'No Such Cart Found'})
         }
@@ -135,7 +141,7 @@ const updateCartType = async(req, res) => {
     try {
         let failed = false
         for(let i=0; i<cart_ids.length; i++) {
-            let cart = await Cart.findOneAndUpdate({ _id: cart_ids[i], user: user_id }, { type: 'ORDER' })
+            let cart = await Cart.findOneAndUpdate({ _id: cart_ids[i], user: user_id, type: 'CART' }, { type: 'ORDER' })
             if(!cart){
                 failed = true;
                 break;
@@ -158,7 +164,7 @@ const deleteCartItem = async(req, res) => {
         if(!mongoose.Types.ObjectId.isValid(id)){
             return res.status(404).json({error: 'No Such Cart Found'})
         }
-        const cart = await Cart.findOneAndDelete({_id: id, user: req.user.id})
+        const cart = await Cart.findOneAndDelete({_id: id, user: req.user.id, type: 'CART'})
         if(!cart){
             return res.status(404).json({error: 'No Such Cart Found'})
         }

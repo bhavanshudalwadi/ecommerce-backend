@@ -7,7 +7,9 @@ const path = require('path');
 const getProducts = async(req, res) => {
     try {
         const products = await Product.find().sort({date: -1})
-        products.forEach(p => p.image = `${process.env.APP_URL}/uploads/${p.image}`)
+        if(Array.isArray(products)) {
+            products.forEach(p => p.image = `${process.env.APP_URL}/uploads/${p.image}`)
+        }
         res.status(200).json(products)
     } catch (error) {
         console.error(error.message)

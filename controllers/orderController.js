@@ -1,3 +1,4 @@
+const Cart = require('../models/Cart')
 const Order = require('../models/Order')
 const mongoose = require('mongoose')
 
@@ -69,6 +70,17 @@ const addOrder = async(req, res) => {
     }
 
     try{
+        let failed = false
+        for(let i=0; i<cart_ids.length; i++) {
+            let cart = await Cart.findOneAndUpdate({ _id: cart_ids[i], user: user_id }, { type: 'ORDER' })
+            if(!cart){
+                failed = true;
+                break;
+            }
+        }
+        if(failed) {
+            return res.status(400).json({error: 'Failed to update cart'})
+        }
         const order = await Order.create({
             user: user_id,
             products: cart_ids,
