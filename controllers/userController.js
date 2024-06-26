@@ -69,9 +69,6 @@ const authUser = async (req, res) => {
             return res.status(400).json({ error: 'Enter valid user details' }) //Password is wrong
         }
 
-        // JWT Auth
-        console.log(user._id)
-        console.log(user.role)
         const data = {
             user: {
                 id: user._id,
@@ -80,7 +77,7 @@ const authUser = async (req, res) => {
         }
         const authToken = jwt.sign(data, process.env.JWT_SECRET)
 
-        res.status(200).json({ authToken })
+        res.status(200).json({ authToken, role: user.role })
     } catch (error) {
         console.error(error.message)
         res.status(500).json({ error: "Internal Server Error" })

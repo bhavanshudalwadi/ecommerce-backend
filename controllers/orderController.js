@@ -18,7 +18,13 @@ const getOrder = async(req, res) => {
     }
     try {
         const userId = req.user.id
-        const order = await Order.find({ user: userId }).sort({date: -1}).populate(['user', 'products'])
+        const order = await Order.find({ user: userId }).sort({date: -1}).populate(['user', {
+            path: 'products',
+            populate: { path: 'product' }
+        }])
+        // if(Array.isArray(order)) {
+        //     order.forEach(o => o.products.forEach(c => c.product.image = `${process.env.APP_URL}/uploads/${c.product.image}`))
+        // }
         res.status(200).json(order)
     } catch (error) {
         console.error(error.message)
