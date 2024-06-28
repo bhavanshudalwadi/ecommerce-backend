@@ -20,9 +20,15 @@ mongoose.connect(process.env.MONGO_URI)
 
 // To Allow CORS Access
 app.use(cors());
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+app.use('/uploads', express.static('../uploads'))
 // To use json as request
 app.use(express.json());
+
+app.get('/path', (req, res) => res.send(path.join(__dirname, '../uploads')))
+// D:\E-Commerce Website\ecommerce-backend\uploads
+
+app.get('/dirname', (req, res) => res.send(__dirname))
+// D:\E-Commerce Website\ecommerce-backend\api
 
 //  All Requests
 app.use('/api/users', require("../routes/user")); 
