@@ -7,9 +7,9 @@ const path = require('path');
 const getProducts = async(req, res) => {
     try {
         const products = await Product.find().sort({date: -1})
-        if(Array.isArray(products)) {
-            products.forEach(p => p.image = `${process.env.APP_URL}/uploads/${p.image}`)
-        }
+        // if(Array.isArray(products)) {
+        //     products.forEach(p => p.image = `${process.env.APP_URL}/uploads/${p.image}`)
+        // }
         res.status(200).json(products)
     } catch (error) {
         console.error(error.message)
@@ -25,7 +25,7 @@ const getProduct = async(req, res) => {
             return res.status(404).json({error: 'No Such Product Found'}) //Not Valid Id Type
         }
         const product = await Product.findOne({_id: id})
-        product.image = `${process.env.APP_URL}/uploads/${product.image}`
+        // product.image = `${process.env.APP_URL}/uploads/${product.image}`
         if(!product) {
             return res.status(404).json({error: 'No Such Product Found'})
         }

@@ -18,9 +18,9 @@ const getCart = async(req, res) => {
     try {
         const userId = req.user.id
         const cart = await Cart.find({ user: userId, type: 'CART' }).sort({date: -1}).populate(['user', 'product'])
-        if(Array.isArray(cart)) {
-            cart.forEach(c => c.product.image = `${process.env.APP_URL}/uploads/${c.product.image}`)
-        }
+        // if(Array.isArray(cart)) {
+        //     cart.forEach(c => c.product.image = `${process.env.APP_URL}/uploads/${c.product.image}`)
+        // }
         res.status(200).json(cart)
     } catch (error) {
         console.error(error.message)
